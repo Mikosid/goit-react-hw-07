@@ -1,34 +1,36 @@
 import Contact from "../Contact/Contact";
-import { useSelector, useDispatch } from "react-redux";
-import { selectContacts } from "../../redux/contactsSlice";
-import { selectNameFilter } from "../../redux/filtersSlice";
-import { deleteContact } from "../../redux/contactsSlice";
+import { useSelector } from "react-redux";
+import { selectFilter, selectContacts } from "../../redux/selectors";
 
 import css from "./ContactList.module.css";
+import { Heading } from "../Heading/Heading";
 
-export default function ContactList() {
+export const ContactList = () => {
   const contacts = useSelector(selectContacts);
-  const nameFilter = useSelector(selectNameFilter);
-  const dispatch = useDispatch();
+  const nameFilter = useSelector(selectFilter);
 
   const visibleContacts = contacts.filter((contact) =>
     contact.name.toLowerCase().includes(nameFilter.toLowerCase())
   );
 
-  const handleDeleteContact = (contactId) => {
-    dispatch(deleteContact(contactId));
-  };
-
   return (
-    <ul className={css.list}>
-      {visibleContacts.map((contact) => (
-        <li className={css.item} key={contact.id}>
-          <Contact
-            data={contact}
-            onDelete={() => handleDeleteContact(contact.id)}
-          />
-        </li>
-      ))}
-    </ul>
+    <>
+      {!contacts.length ? (
+        <Heading>We did not find any contact😯</Heading>
+      ) : (
+        <ul className={css.list}>
+          {visibleContacts.map(
+            (contact, index) => (
+              console.log(contact),
+              (
+                <li className={css.item} key={contact.id}>
+                  <Contact counter={index + 1} {...contact} />
+                </li>
+              )
+            )
+          )}
+        </ul>
+      )}
+    </>
   );
-}
+};
